@@ -64,6 +64,11 @@
 				<artifactId>json</artifactId>
 				<version>${json.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.microservices.demo</groupId>
+				<artifactId>app-config-data</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

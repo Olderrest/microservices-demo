@@ -1,6 +1,6 @@
 package com.microservices.demo.twitter.to.kafka.service.runner.impl;
 
-import com.microservices.demo.twitter.to.kafka.service.config.TwitterToKafkaServiceConfigData;
+import com.microservices.demo.config.TwitterToKafkaServiceConfigData;
 import com.microservices.demo.twitter.to.kafka.service.listener.TwitterKafkaStatusListener;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -218,13 +218,13 @@ public class TwitterV2StreamHelper {
     }
 
     private String getFormattedTweet(String data) throws JSONException {
-        JSONObject jsonData = (JSONObject)new JSONObject(data).get("data");
+        JSONObject jsonData = (JSONObject) new JSONObject(data).get("data");
 
         String[] params = new String[]{
                 ZonedDateTime.parse(jsonData.get("created_at").toString()).withZoneSameInstant(ZoneId.of("UTC"))
                         .format(DateTimeFormatter.ofPattern(TWITTER_STATUS_DATE_FORMAT, Locale.ENGLISH)),
                 jsonData.get("id").toString(),
-                jsonData.get("text").toString().replaceAll("\"","\\\\\""),
+                jsonData.get("text").toString().replaceAll("\"", "\\\\\""),
                 jsonData.get("author_id").toString(),
         };
         return formatTweetAsJsonWithParams(params);
