@@ -32,6 +32,7 @@ public class TwitterV2KafkaStreamRunner implements StreamRunner {
 
     @Override
     public void start() {
+        LOG.info("Start filtering twitter V2 streams");
         String bearerToken = twitterToKafkaServiceConfigData.getTwitterV2BearerToken();
         if (bearerToken != null) {
             try {
@@ -56,7 +57,7 @@ public class TwitterV2KafkaStreamRunner implements StreamRunner {
         for (String keyword : keywords) {
             rules.put(keyword, "Keyword: " + keyword);
         }
-        LOG.info("Created filter for twitter stream for keywords: {}", keywords);
+        LOG.info("Created filter for twitter V2 stream for keywords: {}", keywords);
         return rules;
     }
 }
