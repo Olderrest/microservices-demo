@@ -80,3 +80,16 @@ services:
       KAFKA_COMPRESSION_TYPE: producer
     networks:
       - ${GLOBAL_NETWORK:-kafka}
+  kafkadrop:
+    image: obsidiandynamics/kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "PLAINTEXT://kafka-broker-1:9092"
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+    depends_on:
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+    networks:
+      - ${GLOBAL_NETWORK:-kafka}
