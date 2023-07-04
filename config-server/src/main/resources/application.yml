@@ -4,3 +4,25 @@ logging:
   level:
     root: info
     org.springframework.cloud.config: DEBUG
+spring:
+  application:
+    name: configserver
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/Olderrest/spring-cloud-config-server-repository
+          clone-on-start: true
+          username: Olderrest
+          password: *****
+        default-label: master
+      fail-fast: true
+  security:
+    user:
+      name: spring_cloud_user
+      password: '{cipher}9dccd9168b2ec9712f45bcb73dc171c72a96283e8339be21aa59aa3020763baa633b3cf93f9c0734f64df4ce4d6eea50'
+encrypt:
+  key: ${ENCRYPT_KEY}
+
+log:
+  app-name: config-server
