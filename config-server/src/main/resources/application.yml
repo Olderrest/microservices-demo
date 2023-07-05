@@ -14,7 +14,7 @@ spring:
           uri: https://github.com/Olderrest/spring-cloud-config-server-repository
           clone-on-start: true
           username: Olderrest
-          password: *****
+          password: '{cipher}61cab60e9250811b94cf11933a44e4eb574e2351d0532cac9b604970ff37d36ed0f0855af52f6987a0dd6059e981c5b1a49ab44ba1a1c3af0d3aa85dcd8cebf9'
         default-label: master
       fail-fast: true
   security:
