@@ -1,7 +1,7 @@
-package com.microservices.demo.elastic.query.web.client.api.error.handler;
+package com.microservices.demo.elastic.query.web.client.common.api.error.handler;
 
 
-import com.microservices.demo.elastic.query.web.client.model.ElasticQueryWebClientRequestModel;
+import com.microservices.demo.elastic.query.web.client.common.model.ElasticQueryWebClientRequestModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -57,10 +57,13 @@ public class ElasticQueryWebClientErrorHandler {
     public String handle(BindException e, Model model) {
         LOG.error("Method argument validation exception!", e);
         Map<String, String> errors = new HashMap<>();
-        e.getBindingResult().getAllErrors().forEach(error -> errors.put(((FieldError) error).getField(), error.getDefaultMessage()));
+        e.getBindingResult().getAllErrors().forEach(error ->
+                errors.put(((FieldError) error).getField(), error.getDefaultMessage()));
         model.addAttribute("elasticQueryWebClientRequestModel", ElasticQueryWebClientRequestModel.builder().build());
         model.addAttribute("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
         model.addAttribute("error_description", errors);
         return "home";
     }
+
+
 }

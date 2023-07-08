@@ -17,6 +17,8 @@
         <module>common-util</module>
         <module>elastic-query-web-client</module>
         <module>elastic-query-service</module>
+        <module>elastic-query-service-common</module>
+        <module>elastic-query-web-client-common</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -106,6 +108,16 @@
             </dependency>
             <dependency>
                 <groupId>com.microservices.demo</groupId>
+                <artifactId>elastic-query-service-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microservices.demo</groupId>
+                <artifactId>elastic-query-web-client-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microservices.demo</groupId>
                 <artifactId>kafka-consumer</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -139,25 +151,6 @@
                 <artifactId>kafka-producer</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>${spring-boot.version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.junit.vintage</groupId>
-                        <artifactId>junit-vintage-engine</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
 
             <!-- REMOTE -->
             <dependency>
@@ -216,6 +209,23 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-ui</artifactId>
                 <version>${springdoc-openapi-ui.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>

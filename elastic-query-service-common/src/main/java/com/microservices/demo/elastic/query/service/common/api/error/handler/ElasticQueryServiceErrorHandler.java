@@ -1,4 +1,4 @@
-package com.microservices.demo.elastic.query.service.api.error.handler;
+package com.microservices.demo.elastic.query.service.common.api.error.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,8 @@ public class ElasticQueryServiceErrorHandler {
     public ResponseEntity<Map<String, String>> handle(MethodArgumentNotValidException e) {
         LOG.error("Method argument validation exception!", e);
         Map<String, String> errors = new HashMap<>();
-        e.getBindingResult().getAllErrors().forEach(error -> errors.put(((FieldError) error).getField(), error.getDefaultMessage()));
+        e.getBindingResult().getAllErrors().forEach(error ->
+                errors.put(((FieldError) error).getField(), error.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
     }
 
