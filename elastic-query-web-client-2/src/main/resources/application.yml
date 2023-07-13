@@ -1,0 +1,24 @@
+logging:
+  level:
+    root: INFO
+
+#elastic-query-web-client:
+#  webclient:
+#    instances:
+#      - id: elastic-query-service-1
+#        host: localhost
+#        port: 8183
+
+spring:
+  application:
+    name: elastic-query-web-client-2
+  profiles:
+    active: elastic_query_web_2
+  config:
+    import: 'configserver:'
+  cloud:
+    config:
+      name: elastic-query-web-client-2,config-client
+      uri: http://localhost:8888
+      username: spring_cloud_user
+      password: '{cipher}9086a0ea99acdf75cf99f7f66b6136940a4a807c5e666347752d8827888bfb9fa95c583cde89f81a690b62f831452992'

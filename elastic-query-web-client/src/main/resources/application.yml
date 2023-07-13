@@ -1,3 +1,14 @@
+logging:
+  level:
+    root: INFO
+
+elastic-query-web-client:
+  webclient:
+    instances:
+      - id: elastic-query-service-1
+        host: localhost
+        port: 8183
+
 spring:
   application:
     name: elastic-query-web-client

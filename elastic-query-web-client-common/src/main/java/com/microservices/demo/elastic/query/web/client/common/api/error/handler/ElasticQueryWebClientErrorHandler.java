@@ -31,7 +31,7 @@ public class ElasticQueryWebClientErrorHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public String handle(IllegalArgumentException e, Model model) {
         LOG.error("Illegal argument exception!", e);
-        model.addAttribute("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        model.addAttribute("error", "Could not get response! " + e.getMessage());
         model.addAttribute("error_description", "Illegal argument exception!" + e.getMessage());
         return "error";
     }
