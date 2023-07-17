@@ -1,2 +1,20 @@
 version: '3.7'
 services:
+  keycloak-authorization-server:
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-latest}
+    hostname: keycloak-server
+    ports:
+      - "9091:9091"
+    volumes:
+      - ./keycloak/microservices-realm-export-keycloak-11.json:/opt/keycloak/data/import/import.json
+    environment:
+      - "KEYCLOAK_USER=admin"
+      - "KEYCLOAK_PASSWORD=admin"
+      - "JAVA_OPTS=-Djboss.http.port=9091"
+      - "DB_VENDOR=POSTGRES"
+      - "DB_ADDR=host.docker.internal"
+      - "DB_DATABASE=keycloak"
+      - "DB_USER=keycloak"
+      - "DB_SCHEMA=keycloak"
+      - "DB_PASSWORD=keycloak"
+      - "KEYCLOAK_IMPORT=/opt/keycloak/data/import/import.json"
