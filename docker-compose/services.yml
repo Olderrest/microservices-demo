@@ -4,7 +4,9 @@ services:
     image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-latest}
     hostname: keycloak-server
     ports:
-      - '9091:9091'
+      - "9091:9091"
+    volumes:
+      - ./keycloak/microservices-realm-export-keycloak-11.json:/opt/keycloak/data/import/import.json
     environment:
       - "KEYCLOAK_USER=admin"
       - "KEYCLOAK_PASSWORD=admin"
@@ -15,68 +17,69 @@ services:
       - "DB_USER=keycloak"
       - "DB_SCHEMA=keycloak"
       - "DB_PASSWORD=keycloak"
-      - "KEYCLOAK_IMPORT=/opt/keycloak/data/import/microservices-realm-export-keycloak-11.json"
-    volumes:
-      - ./keycloak:/opt/keycloak/data/import
+      - "KEYCLOAK_IMPORT=/opt/keycloak/data/import/import.json"
     networks:
       - ${GLOBAL_NETWORK:-services}
-#  twitter-to-kafka-service:
-#    image: ${GROUP_ID}/twitter.to.kafka.service:${SERVICE_VERSION}
-#    ports:
-#      - "5005:5005"
-#    volumes:
-#      - "./docker-logs:/workspace/twitter-to-kafka-service/logs"
-#      - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
-#    user: root
-#    entrypoint: [ "check-config-server-started.sh" ]
-#    depends_on:
-#      - config-server
-#      - kafka-broker-1
-#      - kafka-broker-2
-#      - kafka-broker-3
-#    environment:
-#      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xms128m -Xmx256m"
-#      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
-#      - "LOGGING_LEVEL_ROOT=info"
-#      - "KAFKA-CONFIG_TOPIC-NAME=twitter-topic"
-#      - "KAFKA-CONFIG_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
-#      - "KAFKA-CONFIG_SCHEMA-REGISTRY-URL=http://schema-registry:8081"
-#      - "TWITTER-TO-KAFKA-SERVICE_ENABLE-MOCK-TWEETS=true"
-#      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
-#      - "ENCRYPT_KEY=${ENCRYPT_KEY}"
-#    networks:
-#      - ${GLOBAL_NETWORK:-services}
-#  kafka-to-elastic-service:
-#    image: ${GROUP_ID}/kafka.to.elastic.service:${SERVICE_VERSION:-latest}
-#    ports:
-#      - "5006:5006"
-#    volumes:
-#      - "./docker-logs:/workspace/kafka-to-elastic-service/logs"
-#      - "./check-kafka-topics-created.sh:/usr/local/bin/check-kafka-topics-created.sh"
-#    user: root
-#    entrypoint: [ "check-kafka-topics-created.sh" ]
-#    depends_on:
-#      - config-server
-#      - twitter-to-kafka-service
-#      - kafka-broker-1
-#      - kafka-broker-2
-#      - kafka-broker-3
-#      - elastic-1
-#      - elastic-2
-#      - elastic-3
-#    environment:
-#      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Xms128m -Xmx256m"
-#      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
-#      - "LOGGING_LEVEL_ROOT=info"
-#      - "KAFKA-CONFIG_TOPIC-NAME=twitter-topic"
-#      - "KAFKA-CONFIG_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
-#      - "KAFKA-CONFIG_SCHEMA-REGISTRY-URL=http://schema-registry:8081"
-#      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
-#      - "ELASTIC-CONFIG_INDEX-NAME=twitter-index"
-#      - "ELASTIC-CONFIG_CONNECTION-URL=http://elastic-1:9200"
-#      - "ENCRYPT_KEY=${ENCRYPT_KEY}"
-#    networks:
-#      - ${GLOBAL_NETWORK:-services}
+  twitter-to-kafka-service:
+    image: ${GROUP_ID}/twitter.to.kafka.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5005:5005"
+    volumes:
+      - "./docker-logs:/workspace/twitter-to-kafka-service/logs"
+      - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
+      - "./check-keycloak-server-started.sh:/usr/local/bin/check-keycloak-server-started.sh"
+    user: root
+    entrypoint: ["check-config-server-started.sh"]
+    depends_on:
+      - config-server
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xms128m -Xmx256m"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=error"
+      - "LOGGING_LEVEL_ROOT=error"
+      - "KAFKA-CONFIG_TOPIC-NAME=twitter-topic"
+      - "KAFKA-CONFIG_TOPIC-NAMES-TO-CREATE_0=twitter-topic"
+      - "KAFKA-CONFIG_TOPIC-NAMES-TO-CREATE_1=twitter-analytics-topic"
+      - "KAFKA-CONFIG_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
+      - "KAFKA-CONFIG_SCHEMA-REGISTRY-URL=http://schema-registry:8081"
+      - "TWITTER-TO-KAFKA-SERVICE_ENABLE-MOCK-TWEETS=false"
+      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
+      - "ENCRYPT_KEY=${ENCRYPT_KEY}"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+  kafka-to-elastic-service:
+    image: ${GROUP_ID}/kafka.to.elastic.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5006:5006"
+    volumes:
+      - "./docker-logs:/workspace/kafka-to-elastic-service/logs"
+      - "./check-kafka-topics-created.sh:/usr/local/bin/check-kafka-topics-created.sh"
+    user: root
+    entrypoint: ["check-kafka-topics-created.sh"]
+    depends_on:
+      - config-server
+      - twitter-to-kafka-service
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+      - elastic-1
+      - elastic-2
+      - elastic-3
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Xms128m -Xmx256m"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=error"
+      - "LOGGING_LEVEL_ROOT=error"
+      - "KAFKA-CONFIG_TOPIC-NAME=twitter-topic"
+      - "KAFKA-CONFIG_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
+      - "KAFKA-CONFIG_SCHEMA-REGISTRY-URL=http://schema-registry:8081"
+      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
+      - "ELASTIC-CONFIG_INDEX-NAME=twitter-index"
+      - "ELASTIC-CONFIG_CONNECTION-URL=http://elastic-1:9200"
+      - "ENCRYPT_KEY=${ENCRYPT_KEY}"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
   config-server:
     image: ${GROUP_ID}/config.server:${SERVICE_VERSION:-latest}
     ports:
@@ -85,7 +88,7 @@ services:
     volumes:
       - "./docker-logs:/workspace/config-server/logs"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007 -Xms128m -Xmx256m"
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
     networks:
       - ${GLOBAL_NETWORK:-services}
@@ -95,21 +98,20 @@ services:
       - "5008:5008"
       - "8183:8183"
     volumes:
-      - "./docker-logs:/workspace/elastic-query-service-1/logs"
+      - "./docker-logs:/workspace/elastic-query-service/logs"
       - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
       - "./check-keycloak-server-started.sh:/usr/local/bin/check-keycloak-server-started.sh"
     user: root
     entrypoint: [ "check-config-server-started.sh" ]
     depends_on:
       - config-server
-#      - kafka-to-elastic-service
       - elastic-1
       - elastic-2
       - elastic-3
     environment:
       - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008 -Xms128m -Xmx256m"
-      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
-      - "LOGGING_LEVEL_ROOT=info"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=debug"
+      - "LOGGING_LEVEL_ROOT=debug"
       - "ELASTIC-CONFIG_INDEX-NAME=twitter-index"
       - "ELASTIC-CONFIG_CONNECTION-URL=http://elastic-1:9200"
       - "SERVER_PORT=8183"
@@ -117,7 +119,9 @@ services:
       - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
       - "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI=http://keycloak-authorization-server:9091/auth/realms/microservices-realm"
       - "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI=http://keycloak-authorization-server:9091/auth/realms/microservices-realm/protocol/openid-connect/certs"
+      - "SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_TOKEN-URI=http://keycloak-authorization-server:9091/auth/realms/microservices-realm/protocol/openid-connect/token"
       - "SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/postgres?currentSchema=public&binaryTransfer=true&reWriteBatchedInserts=true"
+      - "ELASTIC-QUERY-SERVICE_QUERY-FROM-KAFKA-STATE-STORE_URI=http://kafka-streams-service:8187/kafka-streams-service/get-word-count-by-word/{word}"
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
     networks:
       - ${GLOBAL_NETWORK:-services}
@@ -127,19 +131,18 @@ services:
       - "5009:5009"
       - "8186:8186"
     volumes:
-      - "./docker-logs:/workspace/elastic-query-service-2/logs"
+      - "./docker-logs:/workspace/elastic-query-service/logs"
       - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
       - "./check-keycloak-server-started.sh:/usr/local/bin/check-keycloak-server-started.sh"
     user: root
     entrypoint: [ "check-config-server-started.sh" ]
     depends_on:
       - config-server
-#      - kafka-to-elastic-service
       - elastic-1
       - elastic-2
       - elastic-3
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009 -Xms128m -Xmx256m"
       - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
       - "LOGGING_LEVEL_ROOT=info"
       - "ELASTIC-CONFIG_INDEX-NAME=twitter-index"
@@ -149,8 +152,10 @@ services:
       - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
       - "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI=http://keycloak-authorization-server:9091/auth/realms/microservices-realm"
       - "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI=http://keycloak-authorization-server:9091/auth/realms/microservices-realm/protocol/openid-connect/certs"
+      - "SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_TOKEN-URI=http://keycloak-authorization-server:9091/auth/realms/microservices-realm/protocol/openid-connect/token"
       - "SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/postgres?currentSchema=public&binaryTransfer=true&reWriteBatchedInserts=true"
       - "SPRING_DATASOURCE_INITIALIZATION-MODE=never"
+      - "ELASTIC-QUERY-SERVICE_QUERY-FROM-KAFKA-STATE-STORE_URI=http://kafka-streams-service:8187/kafka-streams-service/get-word-count-by-word/{word}"
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
     networks:
       - ${GLOBAL_NETWORK:-services}
@@ -160,7 +165,7 @@ services:
       - "5010:5010"
       - "8184:8184"
     volumes:
-      - "./docker-logs:/workspace/elastic-query-web-client-1/logs"
+      - "./docker-logs:/workspace/elastic-query-web-client/logs"
       - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
       - "./check-keycloak-server-started.sh:/usr/local/bin/check-keycloak-server-started.sh"
     user: root
@@ -169,8 +174,8 @@ services:
       - config-server
     environment:
       - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010 -Xms128m -Xmx256m"
-      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
-      - "LOGGING_LEVEL_ROOT=info"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=debug"
+      - "LOGGING_LEVEL_ROOT=debug"
       - "SERVER_PORT=8184"
       - "SERVER_SERVLET_CONTEXT-PATH=/elastic-query-web-client"
       - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
@@ -193,7 +198,7 @@ services:
       - "5011:5011"
       - "8185:8185"
     volumes:
-      - "./docker-logs:/workspace/elastic-query-web-client-2/logs"
+      - "./docker-logs:/workspace/elastic-query-web-client/logs"
       - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
       - "./check-keycloak-server-started.sh:/usr/local/bin/check-keycloak-server-started.sh"
     user: root
@@ -202,8 +207,8 @@ services:
       - config-server
     environment:
       - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5011 -Xms128m -Xmx256m"
-      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
-      - "LOGGING_LEVEL_ROOT=info"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=debug"
+      - "LOGGING_LEVEL_ROOT=debug"
       - "SERVER_PORT=8185"
       - "SERVER_SERVLET_CONTEXT-PATH=/elastic-query-web-client"
       - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
@@ -217,6 +222,33 @@ services:
       - "SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER-URI=http://keycloak-authorization-server:9091/auth/realms/microservices-realm"
       - "SECURITY_LOGOUT-SUCCESS-URL=http://elastic-query-web-client-2:8185/elastic-query-web-client"
       - "SECURITY_DEFAULT-CLIENT-REGISTRATION-ID=keycloak"
+      - "ENCRYPT_KEY=${ENCRYPT_KEY}"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+  kafka-streams-service:
+    image: ${GROUP_ID}/kafka.streams.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5012:5012"
+      - "8187:8187"
+    volumes:
+      - "./docker-logs:/workspace/kafka-streams-service/logs"
+      - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
+      - "./check-keycloak-server-started.sh:/usr/local/bin/check-keycloak-server-started.sh"
+    user: root
+    entrypoint: [ "check-config-server-started.sh" ]
+    depends_on:
+      - config-server
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5012 -Xms128m -Xmx256m"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=debug"
+      - "LOGGING_LEVEL_ROOT=debug"
+      - "SERVER_PORT=8187"
+      - "SERVER_SERVLET_CONTEXT-PATH=/kafka-streams-service"
+      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
+      - "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI=http://keycloak-authorization-server:9091/auth/realms/microservices-realm"
+      - "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI=http://keycloak-authorization-server:9091/auth/realms/microservices-realm/protocol/openid-connect/certs"
+      - "KAFKA-CONFIG_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
+      - "KAFKA-CONFIG_SCHEMA-REGISTRY-URL=http://schema-registry:8081"
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
     networks:
       - ${GLOBAL_NETWORK:-services}

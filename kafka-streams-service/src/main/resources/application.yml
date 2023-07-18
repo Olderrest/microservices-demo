@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: kafka-streams-service
+  profiles:
+    active: kafka_streams
+  config:
+    import: 'configserver:'
+  cloud:
+    config:
+      name: kafka-streams-service,config-client
+      username: spring_cloud_user
+      password: '{cipher}90bd379dbc8f2738d280fdaa424e66c1961ea7903e847685b049c2cb137288f003c2dcb4c7d7395ae82aad605ec5d220'
+
+log:
+  app-name: kafka-streams-service

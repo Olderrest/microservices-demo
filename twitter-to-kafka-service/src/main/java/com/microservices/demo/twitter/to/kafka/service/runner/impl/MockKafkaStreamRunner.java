@@ -13,6 +13,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterObjectFactory;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Locale;
@@ -80,10 +81,12 @@ public class MockKafkaStreamRunner implements StreamRunner {
     }
 
     private void simulateTwitterStream(String[] keywords, int minTweetLength, int maxTweetLength, long sleepTimeMs) {
+        LOG.info("simulateTwitterStream(): keywords={}, minTweetLength={}, maxTweetLength={}, sleepTimeMs={}", keywords, minTweetLength, maxTweetLength, sleepTimeMs);
         Executors.newSingleThreadExecutor().submit(() -> {
             try {
                 while (true) {
                     String formattedTweetsAsRawJson = getFormattedTweet(keywords, minTweetLength, maxTweetLength);
+                    LOG.info("formattedTweetsAsRawJson={}", formattedTweetsAsRawJson);
                     Status status = TwitterObjectFactory.createStatus(formattedTweetsAsRawJson);
                     twitterKafkaStatusListener.onStatus(status);
                     sleep(sleepTimeMs);
@@ -104,7 +107,7 @@ public class MockKafkaStreamRunner implements StreamRunner {
 
     private String getFormattedTweet(String[] keywords, int minTweetLength, int maxTweetLength) {
         String[] params = new String[]{
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern(TWITTER_STATUS_DATE_FORMAT, Locale.ENGLISH)),
+                ZonedDateTime.now().format(DateTimeFormatter.ofPattern(TWITTER_STATUS_DATE_FORMAT)),
                 String.valueOf(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE)),
                 getRandomTweetContent(keywords, minTweetLength, maxTweetLength),
                 String.valueOf(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE))

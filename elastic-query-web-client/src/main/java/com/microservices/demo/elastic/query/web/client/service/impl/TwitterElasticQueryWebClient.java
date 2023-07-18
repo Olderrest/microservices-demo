@@ -2,6 +2,7 @@ package com.microservices.demo.elastic.query.web.client.service.impl;
 
 import com.microservices.demo.config.ElasticQueryWebClientConfigData;
 import com.microservices.demo.elastic.query.web.client.common.exception.ElasticQueryWebClientException;
+import com.microservices.demo.elastic.query.web.client.common.model.ElasticQueryWebClientAnalyticsResponseModel;
 import com.microservices.demo.elastic.query.web.client.common.model.ElasticQueryWebClientRequestModel;
 import com.microservices.demo.elastic.query.web.client.common.model.ElasticQueryWebClientResponseModel;
 import com.microservices.demo.elastic.query.web.client.service.ElasticQueryWebClient;
@@ -29,17 +30,18 @@ public class TwitterElasticQueryWebClient implements ElasticQueryWebClient {
 
     private final ElasticQueryWebClientConfigData elasticQueryWebClientConfigData;
 
-    public TwitterElasticQueryWebClient(@Qualifier("webClientBuilder") WebClient.Builder clientBuilder, ElasticQueryWebClientConfigData webClientConfigData) {
+    public TwitterElasticQueryWebClient(@Qualifier("webClientBuilder") WebClient.Builder clientBuilder,
+                                        ElasticQueryWebClientConfigData webClientConfigData) {
         this.webClientBuilder = clientBuilder;
         this.elasticQueryWebClientConfigData = webClientConfigData;
     }
 
     @Override
-    public List<ElasticQueryWebClientResponseModel> getDataByText(ElasticQueryWebClientRequestModel requestModel) {
+    public ElasticQueryWebClientAnalyticsResponseModel getDataByText(ElasticQueryWebClientRequestModel requestModel) {
         LOG.info("Querying by text {}", requestModel.getText());
         return getWebClient(requestModel)
-                .bodyToFlux(ElasticQueryWebClientResponseModel.class)
-                .collectList()
+                .bodyToMono(ElasticQueryWebClientAnalyticsResponseModel.class)
+                .log()//Logger
                 .block();
     }
 
