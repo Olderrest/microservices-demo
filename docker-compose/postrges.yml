@@ -5,12 +5,12 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: keycloak
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     volumes:
       - /db:/var/lib/postgresql/data
-      - ./db/init-keycloak-schema.sql:/docker-entrypoint-initdb.d/init-keycloak-schema.sql
+      - ./db/:/docker-entrypoint-initdb.d/
     ports:
       - "5432:5432"
   pgadmin:
