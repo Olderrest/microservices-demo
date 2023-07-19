@@ -24,6 +24,7 @@
         <module>elastic-query-web-client-2</module>
         <module>kafka-streams-service</module>
         <module>analytics-service</module>
+        <module>discovery-service</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -158,6 +159,12 @@
             </dependency>
 
             <!-- REMOTE -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+                <version>${spring-cloud.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
