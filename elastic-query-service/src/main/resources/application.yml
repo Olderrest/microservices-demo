@@ -18,3 +18,5 @@ eureka:
   instance:
     lease-expiration-duration-in-seconds: 5
     lease-renewal-interval-in-seconds: 2
+log:
+  appName: elastic-query-service

@@ -1,21 +1,11 @@
 logging:
   level:
     root: INFO
-
-#elastic-query-web-client:
-#  webclient:
-#    instances:
-#      - id: elastic-query-service-1
-#        host: localhost
-#        port: 8183
-
 spring:
   application:
     name: elastic-query-web-client-2
   profiles:
     active: elastic_query_web_2
-  config:
-    import: 'configserver:'
   cloud:
     config:
       name: elastic-query-web-client-2,config-client
@@ -29,3 +19,6 @@ eureka:
   instance:
     lease-expiration-duration-in-seconds: 5
     lease-renewal-interval-in-seconds: 2
+
+log:
+  app-name: elastic-query-web-client-2
