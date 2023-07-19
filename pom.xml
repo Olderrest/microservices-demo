@@ -26,6 +26,7 @@
         <module>analytics-service</module>
         <module>discovery-service</module>
         <module>gateway-service</module>
+        <module>mdc-interceptor</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -87,12 +88,18 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
         </dependency>
     </dependencies>
 
     <dependencyManagement>
         <dependencies>
             <!-- LOCAL -->
+            <dependency>
+                <groupId>com.microservices.demo</groupId>
+                <artifactId>mdc-interceptor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.microservices.demo</groupId>
                 <artifactId>elastic-model</artifactId>
@@ -340,7 +347,11 @@
                 <artifactId>micrometer-registry-prometheus</artifactId>
                 <version>${micrometer-registry-prometheus.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logstash-logback-encoder.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
